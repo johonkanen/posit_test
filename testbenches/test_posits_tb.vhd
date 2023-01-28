@@ -19,19 +19,26 @@ architecture vunit_simulation of test_posits_tb is
     signal simulation_counter  : natural   := 0;
     -----------------------------------
     -- simulation specific signals ----
+
+    constant regime_bits   : integer := 4;
+    constant exponent_bits : integer := 3;
+    constant fraction_bits : integer := 8;
+
     type posit_record is record
         sign : std_logic;
-        regime : unsigned(3 downto 0);
-        exponent : unsigned(2 downto 0);
-        fraction : unsigned(7 downto 0);
+        regime   : unsigned(regime_bits-1 downto 0);
+        exponent : unsigned(exponent_bits-1 downto 0);
+        fraction : unsigned(fraction_bits-1 downto 0);
     end record;
 
+------------------------------------------------------------------------
     function to_real
     (
         posit : posit_record
     )
     return real
     is
+
     -------------------------
     function "**"
     (
@@ -53,9 +60,87 @@ architecture vunit_simulation of test_posits_tb is
         return 256.0**(-number_of_zeroes);
     end "**";
     -------------------------
+        constant shadow_bit : real := 1.0;
+
     begin
-        return 2**posit.regime*2.0**(5)*(1.0+real(to_integer(posit.fraction))/256.0);
+        return 2**posit.regime*2.0**(5)*(shadow_bit+real(to_integer(posit.fraction))/256.0);
     end to_real;
+------------------------------------------------------------------------
+    function get_posit_sign
+    (
+        real_number : real
+    )
+    return std_logic 
+    is
+        variable return_value : std_logic;
+    begin
+        if real_number >= 0.0 then
+            return_value := '0';
+        else
+            return_value := '1';
+        end if;
+
+        return return_value;
+        
+    end get_posit_sign;
+------------------------------------------------------------------------
+    function get_regime_bits
+    (
+        real_number : real
+    )
+    return unsigned 
+    is
+        variable return_value : unsigned(regime_bits-1 downto 0) := (others => '0');
+    begin
+        report "regime bits not yet done, returns all zeroes";
+        
+        return return_value;
+    end get_regime_bits;
+------------------------------------------------------------------------
+    function get_exponent_bits
+    (
+        real_number : real
+    )
+    return unsigned 
+    is
+        variable return_value : unsigned(exponent_bits-1 downto 0) := (others => '0');
+    begin
+        report "get_exponent_bits not yet done, returns all zeroes";
+        
+        return return_value;
+        
+    end get_exponent_bits;
+------------------------------------------------------------------------
+    function get_fraction_bits
+    (
+        real_number : real
+    )
+    return unsigned 
+    is
+        variable return_value : unsigned(fraction_bits-1 downto 0) := (others => '0');
+    begin
+        report "get_fraction_bits not yet done, returns all zeroes";
+        
+        return return_value;
+        
+    end get_fraction_bits;
+------------------------------------------------------------------------
+    function to_posit
+    (
+        real_number : real
+    )
+    return posit_record
+    is
+        variable return_value : posit_record := ((sign => '0', regime => "0001", exponent => "101", fraction => "11011101"));
+    begin
+        return_value.sign := get_posit_sign(real_number);
+        return_value.regime := get_regime_bits(real_number);
+        return_value.exponent := get_exponent_bits(real_number);
+        return_value.fraction := get_exponent_bits(real_number);
+        
+        return return_value;
+    end to_posit;
+------------------------------------------------------------------------
 
     signal test1 : real := to_real((sign => '0', regime => "0001", exponent => "101", fraction => "11011101"));
     signal testi2 : real := 256.0**(-3);
