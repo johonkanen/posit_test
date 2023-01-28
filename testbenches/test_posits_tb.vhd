@@ -171,6 +171,8 @@ begin
             check(test_posit.exponent = "101"      , "exponent should be '101'");
             check(test_posit.fraction = "11011101" , "exponent should be '11011101'");
 
+            -- check(to_real(to_posit(3.5)) = 3.5, "goal is to be able to convert real to posit and back");
+
 
         end if; -- rising_edge
     end process stimulus;	
