@@ -90,9 +90,9 @@ architecture vunit_simulation of test_posits_tb is
     )
     return unsigned 
     is
-        variable return_value : unsigned(regime_bits-1 downto 0) := (others => '0');
+        variable return_value : unsigned(regime_bits-1 downto 0) := "0001";
     begin
-        report "regime bits not yet done, returns all zeroes";
+        report "regime bits not yet done" severity warning;
         
         return return_value;
     end get_regime_bits;
@@ -103,9 +103,9 @@ architecture vunit_simulation of test_posits_tb is
     )
     return unsigned 
     is
-        variable return_value : unsigned(exponent_bits-1 downto 0) := (others => '0');
+        variable return_value : unsigned(exponent_bits-1 downto 0) := "101";
     begin
-        report "get_exponent_bits not yet done, returns all zeroes";
+        report "get_exponent_bits not yet done" severity warning;
         
         return return_value;
         
@@ -117,9 +117,9 @@ architecture vunit_simulation of test_posits_tb is
     )
     return unsigned 
     is
-        variable return_value : unsigned(fraction_bits-1 downto 0) := (others => '0');
+        variable return_value : unsigned(fraction_bits-1 downto 0) := "11011101";
     begin
-        report "get_fraction_bits not yet done, returns all zeroes";
+        report "get_fraction_bits not yet done" severity warning;
         
         return return_value;
         
@@ -133,10 +133,10 @@ architecture vunit_simulation of test_posits_tb is
     is
         variable return_value : posit_record := ((sign => '0', regime => "0001", exponent => "101", fraction => "11011101"));
     begin
-        return_value.sign := get_posit_sign(real_number);
-        return_value.regime := get_regime_bits(real_number);
+        return_value.sign     := get_posit_sign(real_number);
+        return_value.regime   := get_regime_bits(real_number);
         return_value.exponent := get_exponent_bits(real_number);
-        return_value.fraction := get_exponent_bits(real_number);
+        return_value.fraction := get_fraction_bits(real_number);
         
         return return_value;
     end to_posit;
@@ -144,6 +144,8 @@ architecture vunit_simulation of test_posits_tb is
 
     signal test1 : real := to_real((sign => '0', regime => "0001", exponent => "101", fraction => "11011101"));
     signal testi2 : real := 256.0**(-3);
+
+    signal test_posit : posit_record := to_posit(3.55393e-6);
 
 begin
 
@@ -164,6 +166,10 @@ begin
     begin
         if rising_edge(simulator_clock) then
             simulation_counter <= simulation_counter + 1;
+            check(test_posit.sign     = '0'        , "sign should be '0', but got '1'");
+            check(test_posit.regime   = "0001"     , "sign should be '0001'");
+            check(test_posit.exponent = "101"      , "exponent should be '101'");
+            check(test_posit.fraction = "11011101" , "exponent should be '11011101'");
 
 
         end if; -- rising_edge
